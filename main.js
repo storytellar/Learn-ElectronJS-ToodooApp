@@ -37,12 +37,13 @@ app.on('ready',function(){
 function createNewTaskWindow(){
     NewTaskWindows = new BrowserWindow({
         width: 300,
-        height: 200,
+        height: 250,
         title: 'New Task',
         webPreferences: {
             nodeIntegration: true
         },
-        titleBarStyle: 'customButtonsOnHover', frame: false
+        titleBarStyle: 'hiddenInset'
+        //frame: false
     });
 
     NewTaskWindows.loadURL(url.format({
@@ -58,6 +59,7 @@ function createNewTaskWindow(){
 ipcMain.on('task:add',function(e,taskName,taskDate){
     mainWindow.webContents.send('task:add', taskName, taskDate);
     NewTaskWindows.close();
+    // ... code => UpdateNewTaskList();
 });
 // Catch task:new
 ipcMain.on('task:new',()=>{

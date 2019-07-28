@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 
-<body>
-    <div class="container">
+<body style='-webkit-app-region: drag;'>
+    <div class="container" style='margin-top:40px;'>
         <form>
             <div>
                 <label>Name: </label>
@@ -16,8 +16,9 @@
                 <label>Date: </label>
                 <input type="date" id="taskDate" class="datepicker">
             </div>
-            <button class="btn waves-effect waves-light" type="submit">Add</button>
-        </form>
+            <button class="btn waves-effect waves-light red accent-2" type="submit">Add</button>
+
+        </form> 
     </div>
 
     <script>
@@ -33,12 +34,6 @@
             const taskDate = document.querySelector('#taskDate').value;
             ipcRenderer.send('task:add', taskName, taskDate);
         }
-
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.datepicker');
-            var instances = M.Datepicker.init(elems, options);
-        });
 
     </script>
 </body>
