@@ -99,19 +99,31 @@ const mainMenuTemplate = [
         label: 'Tasks',
         submenu: [
             {
-                label: 'New task',
+                label: 'New',
                 click() {
                     createNewTaskWindow();
                 },
             },
             {
-                label: 'Clear tasks',
+                label: 'Clear all',
                 click() {
                     mainWindow.webContents.send('item:clear');
                 }
             }
         ],
 
+    },
+    {
+        label: "Edit",
+        submenu: [
+            { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+            { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+            { type: "separator" },
+            { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+            { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+            { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]
     }
 ];
 if (process.platform !== 'darwin') {

@@ -8,9 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style type="text/css">
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
 </head>
 
-<body">
+<body>
     <div class="navbar-fixed" style="-webkit-app-region: drag;-webkit-user-select: none;">
         <nav class="nav-extended">
             <div class="nav-wrapper" style='padding-top:0px; margin-top:16px; margin-left:10px'>
@@ -89,18 +94,19 @@
         }
 
         // update tasks view html from files
-
         const contentOfUL = ul.innerHTML;
         var fs = require("fs");
         fs.readFile("./data/tasks.txt", "utf-8", (err, data) => {
             if (data != contentOfUL && data) {
                 ul.className = 'collection';
                 ul.innerHTML = data;
+
+
             }
         });
 
     </script>
 
-    </body>
+</body>
 
 </html>
