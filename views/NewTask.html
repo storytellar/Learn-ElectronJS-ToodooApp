@@ -11,8 +11,10 @@
     <div class="container">
         <form>
             <div>
-                <label>Task name: </label>
-                <input type="text" id="item" required="required" autofocus>
+                <label>Name: </label>
+                <input type="text" id="taskName" required="required" autofocus>
+                <label>Date: </label>
+                <input type="date" id="taskDate" class="datepicker">
             </div>
             <button class="btn waves-effect waves-light" type="submit">Add</button>
         </form>
@@ -27,9 +29,17 @@
 
         function submitForm(e) {
             e.preventDefault();
-            const item = document.querySelector('#item').value;
-            ipcRenderer.send('item:add', item);
+            const taskName = document.querySelector('#taskName').value;
+            const taskDate = document.querySelector('#taskDate').value;
+            ipcRenderer.send('task:add', taskName, taskDate);
         }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var elems = document.querySelectorAll('.datepicker');
+            var instances = M.Datepicker.init(elems, options);
+        });
+
     </script>
 </body>
 

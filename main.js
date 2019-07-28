@@ -18,7 +18,7 @@ app.on('ready',function(){
         webPreferences: {
             nodeIntegration: true
         },
-        
+        titleBarStyle: 'hiddenInset'
     });
 
     mainWindow.loadURL(url.format({
@@ -35,9 +35,9 @@ app.on('ready',function(){
 });
 
 function createNewTaskWindow(){
-    addWindow = new BrowserWindow({
+    NewTaskWindows = new BrowserWindow({
         width: 300,
-        height: 150,
+        height: 200,
         title: 'New Task',
         webPreferences: {
             nodeIntegration: true
@@ -45,25 +45,27 @@ function createNewTaskWindow(){
         titleBarStyle: 'customButtonsOnHover', frame: false
     });
 
-    addWindow.loadURL(url.format({
+    NewTaskWindows.loadURL(url.format({
         pathname: path.join(__dirname, 'views/NewTask.html'),
         protocol: 'file:',
         slashes: true
     }));
 
-    addWindow.on('close',()=>addWindow=null);
+    NewTaskWindows.on('close',()=>NewTaskWindows=null);
 }
 
-// Catch item:add
-ipcMain.on('item:add',function(e,item){
-    mainWindow.webContents.send('item:add', item);
-    addWindow.close();
+// Catch task:add
+ipcMain.on('task:add',function(e,taskName,taskDate){
+    mainWindow.webContents.send('task:add', taskName, taskDate);
+    NewTaskWindows.close();
 });
 // Catch task:new
 ipcMain.on('task:new',()=>{
     createNewTaskWindow();
 });
 
+
+// Main Menu
 const mainMenuTemplate = [
     {
         label: 'default',
@@ -96,6 +98,9 @@ const mainMenuTemplate = [
 
     }
 ];
+
+
+
 
 if(process.platform!=='darwin'){
     mainMenuTemplate.unshift({});

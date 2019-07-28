@@ -11,34 +11,44 @@
 </head>
 
 <body>
-    <div class="navbar-fixed">
-        <nav>
-            <div class="nav-wrapper">
+    <div class="navbar-fixed" style="-webkit-app-region: drag;-webkit-user-select: none;">
+        <nav class="nav-extended">
+            <div class="nav-wrapper" style='padding-top:0px; margin-top:16px; margin-left:10px'>
                 <a class="brand-logo left"><i class="material-icons">today</i>Toodoo</a>
-            </div>
-            <div class="nav-content">
-                <a onclick="AddNewTask()" class="btn-floating btn-large halfway-fab waves-effect waves-light teal">
-                    <i class="material-icons">add</i>
-                </a>
+                <ul class="right">
+                    <li><a onclick="AddNewTask()"><i class="material-icons">add</i></a></li>
+                </ul>
             </div>
         </nav>
     </div>
 
-    <ul>
+
+    <ul id="taskList" style='margin-top:16px;'>
     </ul>
 
 
     <script>
         const electron = require('electron');
         const { ipcRenderer } = electron;
-        const ul = document.querySelector('ul');
+        const ul = document.querySelector('#taskList');
 
-        ipcRenderer.on('item:add', function (e, item) {
+        ipcRenderer.on('task:add', function (e, taskName, taskDate) {
             ul.className = 'collection';
+
             const li = document.createElement('li');
             li.className = 'collection-item';
-            const itemText = document.createTextNode(item);
-            li.appendChild(itemText);
+
+            const taskText = document.createTextNode(taskName);
+            li.appendChild(taskText);
+
+            if (taskDate) {
+                const span = document.createElement('span');
+                span.className = 'new badge';
+                span.setAttribute('data-badge-caption', '');
+                span.appendChild(document.createTextNode(taskDate));
+                li.appendChild(span);
+            }
+
             ul.appendChild(li);
         });
 
