@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body>
+<body">
     <div class="navbar-fixed" style="-webkit-app-region: drag;-webkit-user-select: none;">
         <nav class="nav-extended">
             <div class="nav-wrapper" style='padding-top:0px; margin-top:16px; margin-left:10px'>
@@ -23,8 +23,8 @@
     </div>
 
 
-    <ul id="taskList" style='margin-top:16px;'>
-    </ul>
+    <ul id="taskList" style='margin-top:16px;'></ul>
+
 
 
     <script>
@@ -48,14 +48,16 @@
                 span.appendChild(document.createTextNode(taskDate));
                 li.appendChild(span);
             }
-
             ul.appendChild(li);
+
+            AutoSave();
         });
 
         ipcRenderer.on('item:clear', function () {
             ul.innerHTML = '';
             ul.className = '';
             // ... code => UpdateNewTaskList();
+            AutoSave();
         });
 
         ul.addEventListener('dblclick', removeItem);
@@ -66,16 +68,39 @@
                 ul.className = '';
             }
             // ... code => UpdateNewTaskList();
+            AutoSave();
         }
     </script>
 
     <script>
+        // send command Add New Task Window
         function AddNewTask() {
             const electron = require('electron');
             const { ipcRenderer } = electron;
             ipcRenderer.send('task:new');
         }
+
+        // send command AutoSave
+        function AutoSave() {
+            const electron = require('electron');
+            const { ipcRenderer } = electron;
+            const ul = document.querySelector('#taskList');
+            ipcRenderer.send('task:autosave', ul.innerHTML);
+        }
+
+        // update tasks view html from files
+
+        const contentOfUL = ul.innerHTML;
+        var fs = require("fs");
+        fs.readFile("./data/tasks.txt", "utf-8", (err, data) => {
+            if (data != contentOfUL && data) {
+                ul.className = 'collection';
+                ul.innerHTML = data;
+            }
+        });
+
     </script>
-</body>
+
+    </body>
 
 </html>

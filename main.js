@@ -1,16 +1,16 @@
 const electron = require('electron');
 const url = require('url');
 const path = require('path');
+var fs = require("fs");
 
-
-const {app, BrowserWindow, Menu, ipcMain} = electron;
+const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 // For official, un-comment the line below
 // process.env.NODE_ENV = 'production';
 
 let mainWindow;
 
-app.on('ready',function(){
+app.on('ready', function () {
     mainWindow = new BrowserWindow({
         width: 350,
         height: 450,
@@ -27,23 +27,24 @@ app.on('ready',function(){
         slashes: true
     }));
 
-    mainWindow.on('close',()=>app.quit());
+    mainWindow.on('close', () => app.quit());
 
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
 
     Menu.setApplicationMenu(mainMenu);
 });
 
-function createNewTaskWindow(){
+function createNewTaskWindow() {
     NewTaskWindows = new BrowserWindow({
         width: 300,
-        height: 250,
+        height: 220,
         title: 'New Task',
+        parent: mainWindow,
         webPreferences: {
             nodeIntegration: true
         },
-        titleBarStyle: 'hiddenInset'
-        //frame: false
+        //titleBarStyle: 'hiddenInset'
+        frame: false
     });
 
     NewTaskWindows.loadURL(url.format({
@@ -52,17 +53,30 @@ function createNewTaskWindow(){
         slashes: true
     }));
 
-    NewTaskWindows.on('close',()=>NewTaskWindows=null);
+    NewTaskWindows.on('close', () => NewTaskWindows = null);
 }
 
 // Catch task:add
-ipcMain.on('task:add',function(e,taskName,taskDate){
+ipcMain.on('task:add', function (e, taskName, taskDate) {
     mainWindow.webContents.send('task:add', taskName, taskDate);
     NewTaskWindows.close();
     // ... code => UpdateNewTaskList();
 });
-// Catch task:new
-ipcMain.on('task:new',()=>{
+
+// Catch task:cancel
+ipcMain.on('task:cancel', () => {
+    NewTaskWindows.close();
+});
+
+// Catch task:autosave
+ipcMain.on('task:autosave', (e, data) => {
+    fs.writeFile("./data/tasks.txt", data, (err) => {
+        if (err) console.log(err);
+    });
+});
+
+// Catch task:new (window)
+ipcMain.on('task:new', () => {
     createNewTaskWindow();
 });
 
@@ -73,26 +87,26 @@ const mainMenuTemplate = [
         label: 'default',
         submenu: [
             {
-                label : 'Quit',
+                label: 'Quit',
                 accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-                click(){
+                click() {
                     app.quit();
                 }
             },
         ]
     },
     {
-        label: 'Item Manager',
-        submenu:[
+        label: 'Tasks',
+        submenu: [
             {
-                label: 'Add Item',
-                click(){
+                label: 'New task',
+                click() {
                     createNewTaskWindow();
                 },
             },
             {
-                label: 'Clear Item',
-                click(){
+                label: 'Clear tasks',
+                click() {
                     mainWindow.webContents.send('item:clear');
                 }
             }
@@ -100,26 +114,23 @@ const mainMenuTemplate = [
 
     }
 ];
-
-
-
-
-if(process.platform!=='darwin'){
+if (process.platform !== 'darwin') {
     mainMenuTemplate.unshift({});
 }
 
-if(process.env.NODE_ENV !== 'production'){
+// If this is a completed product => Hide Developer tools
+if (process.env.NODE_ENV !== 'production') {
     mainMenuTemplate.push({
         label: 'Developer Tools',
         submenu: [
             {
                 label: 'Toggle DevTools',
                 accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
-                click(item, focusedWindow){
+                click(item, focusedWindow) {
                     focusedWindow.toggleDevTools();
-                    
+
                 }
-                
+
             },
             {
                 role: 'reload'
