@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Toodoo</title>
+    <meta charset="UTF-8">
+    <!-- https://materializecss.com/ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper">
+                <a class="brand-logo left"><i class="material-icons">today</i>Toodoo</a>
+            </div>
+            <div class="nav-content">
+                <a onclick="AddNewTask()" class="btn-floating btn-large halfway-fab waves-effect waves-light teal">
+                    <i class="material-icons">add</i>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <ul>
+    </ul>
+
+
+    <script>
+        const electron = require('electron');
+        const { ipcRenderer } = electron;
+        const ul = document.querySelector('ul');
+
+        ipcRenderer.on('item:add', function (e, item) {
+            ul.className = 'collection';
+            const li = document.createElement('li');
+            li.className = 'collection-item';
+            const itemText = document.createTextNode(item);
+            li.appendChild(itemText);
+            ul.appendChild(li);
+        });
+
+        ipcRenderer.on('item:clear', function () {
+            ul.innerHTML = '';
+            ul.className = '';
+        });
+
+        ul.addEventListener('dblclick', removeItem);
+
+        function removeItem(e) {
+            e.target.remove();
+            if (ul.children.length == 0) {
+                ul.className = '';
+            }
+        }
+    </script>
+
+    <script>
+        function AddNewTask() {
+            const electron = require('electron');
+            const { ipcRenderer } = electron;
+            ipcRenderer.send('task:new');
+        }
+    </script>
+</body>
+
+</html>

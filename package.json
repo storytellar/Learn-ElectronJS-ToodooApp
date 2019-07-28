@@ -1,0 +1,19 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "just for studying",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/storytellar/Todo-App.git"
+  },
+  "author": "storytellar and friends",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/storytellar/Todo-App/issues"
+  },
+  "homepage": "https://github.com/storytellar/Todo-App#readme"
+}
