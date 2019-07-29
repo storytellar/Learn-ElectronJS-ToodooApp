@@ -39,6 +39,7 @@
             ipcRenderer.send('task:add', taskName, taskDate);
         }
 
+        // close
         function closeWindow() {
             const electron = require('electron');
             const { ipcRenderer } = electron;

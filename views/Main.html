@@ -33,10 +33,14 @@
 
 
     <script>
+        LoadTasksFromFile()
+
         const electron = require('electron');
         const { ipcRenderer } = electron;
+
         const ul = document.querySelector('#taskList');
 
+        // add new task on main window
         ipcRenderer.on('task:add', function (e, taskName, taskDate) {
             ul.className = 'collection';
 
@@ -58,6 +62,7 @@
             AutoSave();
         });
 
+        // clear all task on main window
         ipcRenderer.on('item:clear', function () {
             ul.innerHTML = '';
             ul.className = '';
@@ -67,12 +72,59 @@
         ul.addEventListener('dblclick', completeTask);
         ul.addEventListener("contextmenu", removeTask);
 
+        // send command Add New Task Window to main.js to make window
+        function AddNewTask() {
+            const electron = require('electron');
+            const { ipcRenderer } = electron;
+            ipcRenderer.send('task:new');
+        }
+
+        // send command AutoSave to main.js
+        function AutoSave() {
+            colorizeDate()
+            const electron = require('electron');
+            const { ipcRenderer } = electron;
+            const ul = document.querySelector('#taskList');
+            ipcRenderer.send('task:autosave', ul.innerHTML);
+        }
+
+        // read and display task on main window
+        function LoadTasksFromFile() {
+            let ul = document.querySelector('#taskList');
+            let contentOfUL = ul.innerHTML;
+            let fs = require("fs");
+            fs.readFile("./data/tasks.txt", "utf-8", (err, data) => {
+                if (data != contentOfUL && data) {
+                    ul.className = 'collection';
+                    ul.innerHTML = data;
+                    colorizeDate();
+                }
+            });
+        }
+
+        // Colorize date if it is today()
+        function colorizeDate() {
+            let span = document.querySelectorAll('span');
+            span.forEach((item) => {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var yyyy = today.getFullYear();
+                today = yyyy + '-' + mm + '-' + dd;
+
+                if (today == item.innerHTML)
+                    item.className = "new badge red"
+                else
+                    item.className = "new badge steal"
+            });
+        }
+
         function completeTask(e) {
             if (e.target.style.textDecoration != 'line-through')
                 e.target.style.textDecoration = 'line-through';
             else
                 e.target.style.textDecoration = 'blink';
-            
+
             if (ul.children.length == 0) {
                 ul.className = '';
             }
@@ -86,54 +138,7 @@
             }
             AutoSave();
         }
-    </script>
 
-    <script>
-        // send command Add New Task Window
-        function AddNewTask() {
-            const electron = require('electron');
-            const { ipcRenderer } = electron;
-            ipcRenderer.send('task:new');
-        }
-
-        // send command AutoSave
-        function AutoSave() {
-            colorizeDate()
-            const electron = require('electron');
-            const { ipcRenderer } = electron;
-            const ul = document.querySelector('#taskList');
-            ipcRenderer.send('task:autosave', ul.innerHTML);
-        }
-
-
-        // update tasks view html from files
-        const contentOfUL = ul.innerHTML;
-        var fs = require("fs");
-        fs.readFile("./data/tasks.txt", "utf-8", (err, data) => {
-            if (data != contentOfUL && data) {
-                ul.className = 'collection';
-                ul.innerHTML = data;
-                colorizeDate();
-            }
-        });
-
-
-        function colorizeDate() {
-            let span = document.querySelectorAll('span');
-            span.forEach((item) => {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0');
-                var yyyy = today.getFullYear();
-
-                // today = mm + '/' + dd + '/' + yyyy; 
-                today = yyyy + '-' + mm + '-' + dd;
-                if (today == item.innerHTML)
-                    item.className = "new badge red"
-                else
-                    item.className = "new badge steal"
-            });
-        }
     </script>
 
 </body>

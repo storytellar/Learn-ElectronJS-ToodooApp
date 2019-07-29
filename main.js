@@ -10,6 +10,7 @@ const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 let mainWindow;
 
+// Main window
 app.on('ready', function () {
     mainWindow = new BrowserWindow({
         width: 350,
@@ -34,6 +35,8 @@ app.on('ready', function () {
     Menu.setApplicationMenu(mainMenu);
 });
 
+
+// Create a sub-window: New Task
 function createNewTaskWindow() {
     NewTaskWindows = new BrowserWindow({
         width: 300,
@@ -43,7 +46,6 @@ function createNewTaskWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        //titleBarStyle: 'hiddenInset'
         frame: false
     });
 
@@ -126,6 +128,8 @@ const mainMenuTemplate = [
         ]
     }
 ];
+
+// Mac OS: Main Menu
 if (process.platform !== 'darwin') {
     mainMenuTemplate.unshift({});
 }
