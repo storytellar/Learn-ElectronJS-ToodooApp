@@ -88,30 +88,14 @@ const mainMenuTemplate = [
     {
         label: 'default',
         submenu: [
-            {
-                label: 'Quit',
-                accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-                click() {
-                    app.quit();
-                }
-            },
+            { label: 'Quit',accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q', click() {app.quit();}},
         ]
     },
     {
         label: 'Tasks',
         submenu: [
-            {
-                label: 'New',
-                click() {
-                    createNewTaskWindow();
-                },
-            },
-            {
-                label: 'Clear all',
-                click() {
-                    mainWindow.webContents.send('item:clear');
-                }
-            }
+            { label: 'New', click(){ createNewTaskWindow();}, accelerator: "CmdOrCtrl+N" },
+            { label: 'Clear all', click() {mainWindow.webContents.send('item:clear');}                }
         ],
 
     },
