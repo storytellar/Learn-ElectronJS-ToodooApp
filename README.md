@@ -2,8 +2,7 @@
 
 From work to play, To-Do is the easiest way to get stuff done, every day.
 
-
-![alt text](https://i.imgur.com/Ia21j6j.png "User Interface")
+<img src="https://i.imgur.com/19HGQG2.png" alt="" data-canonical-src="image.png" height="500" />
 
 
 ## Installation
