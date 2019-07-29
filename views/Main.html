@@ -61,18 +61,29 @@
         ipcRenderer.on('item:clear', function () {
             ul.innerHTML = '';
             ul.className = '';
-            // ... code => UpdateNewTaskList();
             AutoSave();
         });
 
-        ul.addEventListener('dblclick', removeItem);
+        ul.addEventListener('dblclick', completeTask);
+        ul.addEventListener("contextmenu", removeTask);
 
-        function removeItem(e) {
+        function completeTask(e) {
+            if (e.target.style.textDecoration != 'line-through')
+                e.target.style.textDecoration = 'line-through';
+            else
+                e.target.style.textDecoration = 'blink';
+            
+            if (ul.children.length == 0) {
+                ul.className = '';
+            }
+            AutoSave();
+        }
+
+        function removeTask(e) {
             e.target.remove();
             if (ul.children.length == 0) {
                 ul.className = '';
             }
-            // ... code => UpdateNewTaskList();
             AutoSave();
         }
     </script>
@@ -87,11 +98,13 @@
 
         // send command AutoSave
         function AutoSave() {
+            colorizeDate()
             const electron = require('electron');
             const { ipcRenderer } = electron;
             const ul = document.querySelector('#taskList');
             ipcRenderer.send('task:autosave', ul.innerHTML);
         }
+
 
         // update tasks view html from files
         const contentOfUL = ul.innerHTML;
@@ -100,11 +113,27 @@
             if (data != contentOfUL && data) {
                 ul.className = 'collection';
                 ul.innerHTML = data;
-
-
+                colorizeDate();
             }
         });
 
+
+        function colorizeDate() {
+            let span = document.querySelectorAll('span');
+            span.forEach((item) => {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var yyyy = today.getFullYear();
+
+                // today = mm + '/' + dd + '/' + yyyy; 
+                today = yyyy + '-' + mm + '-' + dd;
+                if (today == item.innerHTML)
+                    item.className = "new badge red"
+                else
+                    item.className = "new badge steal"
+            });
+        }
     </script>
 
 </body>
