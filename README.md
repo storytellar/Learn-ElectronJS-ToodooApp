@@ -8,7 +8,8 @@ From work to play, To-Do is the easiest way to get stuff done, every day.
 ## Release
 
 MacOS: [Toodoo v1.0.0b1.zip](https://drive.google.com/file/d/1CNN8E6vbrVeZBUCV1A3s5iCh9LuAy4ok/view)
-Windows OS: [Toodoo v1.0.0b1.zip(https://drive.google.com/file/d/1CaGIlBGs8JtE4jicu7yEWGyjp1jEVI4p/view)
+
+Windows OS: [Toodoo v1.0.0b1.zip](https://drive.google.com/file/d/1CaGIlBGs8JtE4jicu7yEWGyjp1jEVI4p/view)
 
 ## License
 
