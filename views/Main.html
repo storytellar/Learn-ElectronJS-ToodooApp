@@ -8,32 +8,105 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+
     <style type="text/css">
         ::-webkit-scrollbar {
             display: none;
+        }
+
+        #todaylist li span {
+            display: none;
+        }
+
+        #left-side {
+            position: relative;
+        }
+
+        #taskList {
+            position: absolute;
+            top: 68px;
+            left: 0;
+            right: 0;
+        }
+
+        .vl {
+            position: absolute;
+            border-left: 2px solid #bfbfbfab;
+            height: 500px;
+            left: 100%;
+            margin-left: -3px;
+            top: 0;
+            overflow:hidden;
+        }
+
+        #todaylist {
+            color: #3e3e3e;
+        }
+
+        #right-side h3 {
+            color: #313131;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar-fixed" style="-webkit-app-region: drag;-webkit-user-select: none;">
-        <nav class="nav-extended">
-            <div class="nav-wrapper" style='padding-top:0px; margin-top:16px; margin-left:10px'>
-                <a class="brand-logo left"><i class="material-icons">today</i>Toodoo</a>
-                <ul class="right">
-                    <li><a onclick="AddNewTask()"><i class="material-icons">add</i></a></li>
-                </ul>
+
+    <div id="container" class="" style="margin-left:-11px;margin-right:-11px;">
+
+        <div class="row">
+            <div id="left-side" class="col s12 m8">
+                <!-- NAV-BAR -->
+                <div class="navbar-fixed nav-extended">
+                    <nav style="height: 75px;">
+                        <div class="nav-wrapper"
+                            style='-webkit-app-region: drag;-webkit-user-select: none;top:16px; left:10px;'>
+                            <a class="brand-logo left"><i class="material-icons">today</i>Toodoo</a>
+                            <ul class="right" style="margin-top: -5px; padding-right: 10px;">
+                                <li><a onclick="AddNewTask()"><i class="material-icons">add</i></a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+
+                <!-- LIST TASKS -->
+                <ul id="taskList"><div class="vl"></div></ul>
+                
             </div>
-        </nav>
+
+            <div id="right-side" class="col m4 hide-on-small-only" style="font-family: 'Open Sans', sans-serif;">
+                <h3 style="margin-top:90px;margin-left:5px;">Today</h3>
+                <div id="todaylist" style="margin-left:20px;">
+                    <!-- <li class="collection-item">Nộp bài tập 01<span class="new badge"
+                            data-badge-caption="">2019-07-29</span></li>
+                    <li class="collection-item">Gia hạn tên miền google.com<span class="new badge"
+                            data-badge-caption="">2019-08-24</span></li>
+                    <li class="collection-item">Đi du lịch Thổ Nhĩ Kỳ<span class="new badge"
+                            data-badge-caption="">2019-09-06</span></li>
+                    <li class="collection-item">Hoàn thiện website<span class="new badge"
+                            data-badge-caption="">2019-07-29</span></li>
+                    <li class="collection-item">Gia hạn tài khoản Netflix<span class="new badge"
+                            data-badge-caption="">2019-07-29</span></li>
+                    <li class="collection-item">Book vé máy bay <span class="new badge"
+                            data-badge-caption="">2019-10-10</span></li>
+                    <li class="collection-item">Cắt tóc<span class="new badge" data-badge-caption="">2019-07-20</span>
+                    </li>
+                    <li class="collection-item">Viết bài quảng cáo<span class="new badge"
+                            data-badge-caption="">2019-08-25</span></li>
+                    <li class="collection-item">Release phần mềm Toodoo<span class="new badge"
+                            data-badge-caption="">2019-08-29</span></li> -->
+                </div>
+
+            </div>
+        </div>
     </div>
-
-
-    <ul id="taskList" style='margin-top:16px;'></ul>
-
-
-
     <script>
         LoadTasksFromFile()
+
+
+
 
         const electron = require('electron');
         const { ipcRenderer } = electron;
@@ -81,7 +154,7 @@
 
         // send command AutoSave to main.js
         function AutoSave() {
-            colorizeDate()
+            ShowTodayTasks();
             const electron = require('electron');
             const { ipcRenderer } = electron;
             const ul = document.querySelector('#taskList');
@@ -89,7 +162,7 @@
         }
 
         // read and display task on main window
-        function LoadTasksFromFile() {
+        async function LoadTasksFromFile() {
             let ul = document.querySelector('#taskList');
             let contentOfUL = ul.innerHTML;
             let fs = require("fs");
@@ -97,26 +170,37 @@
                 if (data != contentOfUL && data) {
                     ul.className = 'collection';
                     ul.innerHTML = data;
-                    colorizeDate();
+                    ShowTodayTasks();
                 }
             });
+
+
         }
 
-        // Colorize date if it is today()
-        function colorizeDate() {
+        // Colorize and insert today tasks into right-side
+        function ShowTodayTasks() {
             let span = document.querySelectorAll('span');
             span.forEach((item) => {
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0');
-                var yyyy = today.getFullYear();
-                today = yyyy + '-' + mm + '-' + dd;
-
-                if (today == item.innerHTML)
+                if (Today() == item.innerHTML)
                     item.className = "new badge red"
                 else
                     item.className = "new badge steal"
             });
+
+            // insert today tasks into right-side
+            tasklist = document.getElementsByTagName('ul')[1];
+            todaylist = document.getElementById('todaylist');
+            todaylist.innerHTML = '';
+            length = tasklist.getElementsByTagName('li').length;
+
+            for (let i = 0; i < length; i++) {
+                task = tasklist.getElementsByTagName('li')[i];
+                taskDate = task.getElementsByTagName('span')[0].innerHTML;
+                if (Today() == taskDate) {
+                    copy = task.cloneNode(true);
+                    todaylist.appendChild(copy);
+                }
+            }
         }
 
         function completeTask(e) {
@@ -139,6 +223,14 @@
             AutoSave();
         }
 
+        function Today() {
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            return today;
+        }
     </script>
 
 </body>
