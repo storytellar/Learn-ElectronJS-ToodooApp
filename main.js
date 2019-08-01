@@ -6,7 +6,7 @@ var fs = require("fs");
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 // For official, un-comment the line below
-process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = 'production';
 
 let mainWindow;
 
@@ -19,7 +19,8 @@ app.on('ready', function () {
         webPreferences: {
             nodeIntegration: true
         },
-        titleBarStyle: 'hiddenInset'
+        titleBarStyle: 'hiddenInset',
+        frame: false
     });
 
     mainWindow.loadURL(url.format({
@@ -30,9 +31,13 @@ app.on('ready', function () {
 
     mainWindow.on('close', () => app.quit());
 
-    const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-
-    Menu.setApplicationMenu(mainMenu);
+    if (process.platform == 'darwin') {
+        const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+        Menu.setApplicationMenu(mainMenu);
+    }
+    else {
+        mainWindow.removeMenu();
+    }
 });
 
 
@@ -62,7 +67,6 @@ function createNewTaskWindow() {
 ipcMain.on('task:add', function (e, taskName, taskDate) {
     mainWindow.webContents.send('task:add', taskName, taskDate);
     NewTaskWindows.close();
-    // ... code => UpdateNewTaskList();
 });
 
 // Catch task:cancel

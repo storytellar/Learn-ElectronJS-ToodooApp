@@ -64,7 +64,7 @@
                         <div class="nav-wrapper"
                             style='-webkit-app-region: drag;-webkit-user-select: none;top:16px; left:10px;'>
                             <a class="brand-logo left"><i class="material-icons">today</i>Toodoo</a>
-                            <ul class="right" style="margin-top: -5px; padding-right: 10px;">
+                            <ul class="right" style="margin-top: -5px; padding-right: 10px;-webkit-app-region: no-drag;">
                                 <li><a onclick="AddNewTask()"><i class="material-icons">add</i></a></li>
                             </ul>
                         </div>
@@ -197,7 +197,8 @@
 
             for (let i = 0; i < length; i++) {
                 task = tasklist.getElementsByTagName('li')[i];
-                taskDate = task.getElementsByTagName('span')[0].innerHTML;
+                if (task.getElementsByTagName('span')[0] != null)
+                    taskDate = task.getElementsByTagName('span')[0].innerHTML;
                 if (Today() == taskDate) {
                     copy = task.cloneNode(true);
                     todaylist.appendChild(copy);
