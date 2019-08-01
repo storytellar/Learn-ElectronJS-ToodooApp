@@ -6,7 +6,7 @@ var fs = require("fs");
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 
 // For official, un-comment the line below
-// process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = 'production';
 
 let mainWindow;
 
@@ -72,7 +72,7 @@ ipcMain.on('task:cancel', () => {
 
 // Catch task:autosave
 ipcMain.on('task:autosave', (e, data) => {
-    fs.writeFile("./data/tasks.txt", data, (err) => {
+    fs.writeFile( path.join(__dirname, "data/tasks.txt"), data, (err) => {
         if (err) console.log(err);
     });
 });

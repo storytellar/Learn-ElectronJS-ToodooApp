@@ -163,10 +163,12 @@
 
         // read and display task on main window
         async function LoadTasksFromFile() {
+            const path = require('path');
+            const url = require('url');
             let ul = document.querySelector('#taskList');
             let contentOfUL = ul.innerHTML;
             let fs = require("fs");
-            fs.readFile("./data/tasks.txt", "utf-8", (err, data) => {
+            fs.readFile(path.join(path.normalize(__dirname+"/.."), "data/tasks.txt"), "utf-8", (err, data) => {
                 if (data != contentOfUL && data) {
                     ul.className = 'collection';
                     ul.innerHTML = data;
